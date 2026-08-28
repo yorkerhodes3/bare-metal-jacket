@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="An interactive explainer for a Docker-native, self-hosted developer platform on bare metal."
+    />
+    <meta name="theme-color" content="#08111f" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>Bare Metal Jacket | Project Dashboard</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Bare Metal Jacket home">
+        <span class="brand-mark" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+        <span>
+          <strong>Bare Metal Jacket</strong>
+          <small>Cloud convenience. Metal control.</small>
+        </span>
+      </a>
+
+      <nav aria-label="Primary navigation">
+        <a href="#architecture">Architecture</a>
+        <a href="#comparison">Research</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#risks">Risks</a>
+      </nav>
+
+      <a
+        class="button button-small button-ghost"
+        href="https://github.com/yorkerhodes3/bare-metal-jacket"
+      >
+        View repository
+        <span aria-hidden="true">↗</span>
+      </a>
+    </header>
+
+    <main id="main-content">
+      <section class="hero" id="top">
+        <div class="hero-grid" aria-hidden="true"></div>
+        <div class="hero-glow hero-glow-one" aria-hidden="true"></div>
+        <div class="hero-glow hero-glow-two" aria-hidden="true"></div>
+
+        <div class="hero-content reveal">
+          <p class="eyebrow">
+            <span class="status-dot"></span>
+            Phase 0 · Contract and threat definition
+          </p>
+          <h1>
+            The developer platform experience,
+            <span>on infrastructure you control.</span>
+          </h1>
+          <p class="hero-copy">
+            A Docker-native, bare-metal-first path from Git push to a healthy
+            HTTPS service—without requiring Kubernetes for the first working
+            release.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#architecture">
+              Explore the system
+              <span aria-hidden="true">↓</span>
+            </a>
+            <a
+              class="button button-secondary"
+              href="https://github.com/yorkerhodes3/bare-metal-jacket/blob/main/docs/research/competitive-landscape.md"
+            >
+              Read the research
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-terminal reveal" aria-label="Deployment flow summary">
+          <div class="terminal-bar">
+            <span></span><span></span><span></span>
+            <p>release-flow.log</p>
+          </div>
+          <ol class="terminal-flow">
+            <li>
+              <span class="terminal-time">00:00</span>
+              <span class="terminal-ok">verified</span>
+              <strong>Git webhook</strong>
+            </li>
+            <li>
+              <span class="terminal-time">00:02</span>
+              <span class="terminal-run">running</span>
+              <strong>BuildKit image build</strong>
+            </li>
+            <li>
+              <span class="terminal-time">00:31</span>
+              <span class="terminal-ok">published</span>
+              <strong>OCI digest</strong>
+            </li>
+            <li>
+              <span class="terminal-time">00:36</span>
+              <span class="terminal-run">checking</span>
+              <strong>Candidate readiness</strong>
+            </li>
+            <li>
+              <span class="terminal-time">00:44</span>
+              <span class="terminal-ok">active</span>
+              <strong>HTTPS release</strong>
+            </li>
+          </ol>
+          <div class="terminal-result">
+            <span>→</span>
+            <p>
+              deployment <strong>#d7f2</strong> is healthy
+              <small>previous release retained for rollback</small>
+            </p>
+          </div>
+        </div>
+
+        <dl class="hero-stats reveal">
+          <div>
+            <dt>1</dt>
+            <dd>node for the MVP</dd>
+          </div>
+          <div>
+            <dt>8</dt>
+            <dd>established repos reviewed</dd>
+          </div>
+          <div>
+            <dt>3</dt>
+            <dd>privilege boundaries</dd>
+          </div>
+          <div>
+            <dt>0</dt>
+            <dd>Kubernetes dependencies</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section
+        class="section principles-section"
+        aria-labelledby="principles-title"
+      >
+        <div class="section-heading reveal">
+          <p class="eyebrow">Operating thesis</p>
+          <h2 id="principles-title">Simple first. Safe by design.</h2>
+          <p>
+            Prove the complete release loop before adding distributed
+            coordination. Keep high-privilege operations behind narrow,
+            replaceable adapters from day one.
+          </p>
+        </div>
+
+        <div class="principle-grid">
+          <article class="principle-card reveal">
+            <span class="principle-number">01</span>
+            <div class="principle-icon icon-container" aria-hidden="true"></div>
+            <h3>Docker-native</h3>
+            <p>
+              Accept a Dockerfile or immutable OCI image. Avoid a broad runtime
+              matrix until the release path is reliable.
+            </p>
+          </article>
+          <article class="principle-card reveal">
+            <span class="principle-number">02</span>
+            <div class="principle-icon icon-shield" aria-hidden="true"></div>
+            <h3>Privilege separated</h3>
+            <p>
+              The API never owns Docker access. Build and runtime authority
+              stays inside narrowly scoped adapters.
+            </p>
+          </article>
+          <article class="principle-card reveal">
+            <span class="principle-number">03</span>
+            <div class="principle-icon icon-release" aria-hidden="true"></div>
+            <h3>Release aware</h3>
+            <p>
+              Building, scheduling, health checking, and activating are
+              distinct, auditable state transitions.
+            </p>
+          </article>
+          <article class="principle-card reveal">
+            <span class="principle-number">04</span>
+            <div class="principle-icon icon-observe" aria-hidden="true"></div>
+            <h3>Observable</h3>
+            <p>
+              Deployment events, logs, metrics, traces, and audit records are
+              first-class platform output.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section
+        class="section architecture-section"
+        id="architecture"
+        aria-labelledby="architecture-title"
+      >
+        <div class="section-heading section-heading-light reveal">
+          <p class="eyebrow">Reference architecture</p>
+          <h2 id="architecture-title">
+            One control loop, explicit boundaries.
+          </h2>
+          <p>
+            Select a component to see what it owns—and what it is deliberately
+            prevented from owning.
+          </p>
+        </div>
+
+        <div class="architecture-shell reveal">
+          <div
+            class="architecture-map"
+            role="group"
+            aria-label="Platform components"
+          >
+            <button
+              class="arch-node is-active"
+              data-component="developer"
+              type="button"
+            >
+              <span class="node-kind">Entry</span>
+              <strong>Console / API</strong>
+              <small>Desired state</small>
+            </button>
+            <span class="arch-arrow" aria-hidden="true">→</span>
+            <button class="arch-node" data-component="control" type="button">
+              <span class="node-kind">Control</span>
+              <strong>Control plane</strong>
+              <small>PostgreSQL + jobs</small>
+            </button>
+            <span class="arch-split" aria-hidden="true">
+              <i></i>
+              <i></i>
+            </span>
+            <div class="arch-branches">
+              <div>
+                <button class="arch-node" data-component="build" type="button">
+                  <span class="node-kind">Build</span>
+                  <strong>Build adapter</strong>
+                  <small>BuildKit → registry</small>
+                </button>
+                <span class="arch-arrow" aria-hidden="true">→</span>
+                <button
+                  class="arch-node"
+                  data-component="registry"
+                  type="button"
+                >
+                  <span class="node-kind">Artifact</span>
+                  <strong>OCI registry</strong>
+                  <small>Digest-addressed</small>
+                </button>
+              </div>
+              <div>
+                <button
+                  class="arch-node"
+                  data-component="runtime"
+                  type="button"
+                >
+                  <span class="node-kind">Runtime</span>
+                  <strong>Node agent</strong>
+                  <small>Docker reconcile</small>
+                </button>
+                <span class="arch-arrow" aria-hidden="true">→</span>
+                <button class="arch-node" data-component="edge" type="button">
+                  <span class="node-kind">Edge</span>
+                  <strong>Traefik / Caddy</strong>
+                  <small>Health + HTTPS</small>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <aside class="component-detail" aria-live="polite">
+            <p class="detail-label" id="component-label">Entry boundary</p>
+            <h3 id="component-title">Console / API</h3>
+            <p id="component-copy">
+              Authenticates requests and records desired state. It cannot run
+              arbitrary infrastructure commands or access the Docker socket.
+            </p>
+            <ul id="component-list">
+              <li>OIDC authentication and project authorization</li>
+              <li>Versioned resource contract</li>
+              <li>Idempotent deployment requests</li>
+            </ul>
+          </aside>
+        </div>
+
+        <div class="invariant-strip reveal">
+          <p>
+            <span>Invariant</span> A successful build never activates itself.
+          </p>
+          <p>
+            <span>Invariant</span> A failed candidate never replaces a healthy
+            release.
+          </p>
+          <p><span>Invariant</span> Runtime images are pulled by digest.</p>
+        </div>
+      </section>
+
+      <section
+        class="section lifecycle-section"
+        aria-labelledby="lifecycle-title"
+      >
+        <div class="section-heading reveal">
+          <p class="eyebrow">Deployment lifecycle</p>
+          <h2 id="lifecycle-title">Every phase explains itself.</h2>
+          <p>
+            The state model keeps build success separate from production
+            activation and preserves the exact failure phase.
+          </p>
+        </div>
+
+        <ol class="lifecycle reveal" aria-label="Deployment phases">
+          <li>
+            <span>01</span>
+            <strong>Queued</strong>
+            <small>Durable job created</small>
+          </li>
+          <li>
+            <span>02</span>
+            <strong>Cloning</strong>
+            <small>Authorized commit</small>
+          </li>
+          <li>
+            <span>03</span>
+            <strong>Building</strong>
+            <small>Isolated BuildKit</small>
+          </li>
+          <li>
+            <span>04</span>
+            <strong>Publishing</strong>
+            <small>Immutable digest</small>
+          </li>
+          <li>
+            <span>05</span>
+            <strong>Scheduling</strong>
+            <small>Declared limits</small>
+          </li>
+          <li>
+            <span>06</span>
+            <strong>Checking</strong>
+            <small>Readiness window</small>
+          </li>
+          <li class="lifecycle-active">
+            <span>07</span>
+            <strong>Active</strong>
+            <small>Traffic switched</small>
+          </li>
+        </ol>
+      </section>
+
+      <section
+        class="section comparison-section"
+        id="comparison"
+        aria-labelledby="comparison-title"
+      >
+        <div class="section-heading reveal">
+          <p class="eyebrow">Tavily-backed research · 2026-08-28</p>
+          <h2 id="comparison-title">Learn from products. Own the contract.</h2>
+          <p>
+            Managed platforms define user expectations. Self-hosted projects
+            reveal proven implementation patterns and operational tradeoffs.
+          </p>
+        </div>
+
+        <div
+          class="comparison-controls reveal"
+          role="tablist"
+          aria-label="Research category"
+        >
+          <button
+            class="comparison-tab is-active"
+            type="button"
+            role="tab"
+            aria-selected="true"
+            data-dataset="managed"
+          >
+            Managed benchmarks
+          </button>
+          <button
+            class="comparison-tab"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            data-dataset="selfHosted"
+          >
+            Self-hosted PaaS
+          </button>
+          <button
+            class="comparison-tab"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            data-dataset="runtime"
+          >
+            Runtime options
+          </button>
+        </div>
+
+        <div class="comparison-panel reveal" role="tabpanel">
+          <div class="comparison-intro">
+            <div>
+              <p class="detail-label" id="dataset-label">Managed benchmarks</p>
+              <h3 id="dataset-title">The expected developer experience</h3>
+            </div>
+            <p id="dataset-copy">
+              Render and Railway set the parity bar for fast Git-to-production
+              workflows, safe releases, and clear service state.
+            </p>
+          </div>
+          <div class="comparison-table-wrap">
+            <table class="comparison-table">
+              <thead id="comparison-head"></thead>
+              <tbody id="comparison-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="research-callout reveal">
+          <div>
+            <p class="eyebrow">Key finding</p>
+            <h3>The closest references are not the final architecture.</h3>
+          </div>
+          <p>
+            Coolify and Dokploy demonstrate feature breadth. Dokku and CapRover
+            demonstrate mature simplicity. This project differentiates through
+            explicit state, privilege separation, provenance, and bare-metal
+            recovery—not a larger template catalog.
+          </p>
+          <a
+            href="https://github.com/yorkerhodes3/bare-metal-jacket/blob/main/docs/research/competitive-landscape.md"
+          >
+            Open the detailed research
+            <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </section>
+
+      <section
+        class="section landscape-section"
+        aria-labelledby="landscape-title"
+      >
+        <div class="section-heading reveal">
+          <p class="eyebrow">Open-source landscape</p>
+          <h2 id="landscape-title">Patterns worth studying.</h2>
+          <p>
+            Repository activity captured during research. Popularity is a
+            discovery signal—not a security or architecture verdict.
+          </p>
+        </div>
+
+        <div class="repo-grid">
+          <a
+            class="repo-card reveal"
+            href="https://github.com/coollabsio/coolify"
+          >
+            <div>
+              <span class="repo-rank">Broadest comparator</span>
+              <span class="license">Apache-2.0</span>
+            </div>
+            <h3>coollabsio/coolify</h3>
+            <p>
+              UI-driven PaaS, Git workflows, Compose, domains, backups, and
+              multiple servers.
+            </p>
+            <footer>
+              <strong>61.2k</strong> stars at snapshot <span>↗</span>
+            </footer>
+          </a>
+          <a class="repo-card reveal" href="https://github.com/Dokploy/dokploy">
+            <div>
+              <span class="repo-rank">Closest modern peer</span>
+              <span class="license">Mixed boundary</span>
+            </div>
+            <h3>Dokploy/dokploy</h3>
+            <p>
+              Compose and Swarm workflows, remote servers, monitoring,
+              deployments, and backups.
+            </p>
+            <footer>
+              <strong>36.9k</strong> stars at snapshot <span>↗</span>
+            </footer>
+          </a>
+          <a class="repo-card reveal" href="https://github.com/dokku/dokku">
+            <div>
+              <span class="repo-rank">Mature minimal PaaS</span>
+              <span class="license">MIT</span>
+            </div>
+            <h3>dokku/dokku</h3>
+            <p>
+              Long-running evidence for Git-push deployments and a focused
+              Docker lifecycle.
+            </p>
+            <footer>
+              <strong>32.1k</strong> stars at snapshot <span>↗</span>
+            </footer>
+          </a>
+          <a class="repo-card reveal" href="https://github.com/basecamp/kamal">
+            <div>
+              <span class="repo-rank">Deployment primitive</span>
+              <span class="license">MIT</span>
+            </div>
+            <h3>basecamp/kamal</h3>
+            <p>
+              Transparent Docker deployment to bare metal or VMs with a
+              deliberately small model.
+            </p>
+            <footer>
+              <strong>14.5k</strong> stars at snapshot <span>↗</span>
+            </footer>
+          </a>
+        </div>
+
+        <p class="license-note reveal">
+          <strong>License gate:</strong> Nomad 1.7+ is Business Source License,
+          CapRover adds restrictions to Apache-2.0, and unlicensed emerging
+          repositories provide no general reuse permission.
+        </p>
+      </section>
+
+      <section
+        class="section roadmap-section"
+        id="roadmap"
+        aria-labelledby="roadmap-title"
+      >
+        <div class="section-heading section-heading-light reveal">
+          <p class="eyebrow">Delivery plan</p>
+          <h2 id="roadmap-title">Earn complexity one phase at a time.</h2>
+          <p>
+            Each phase closes an operational risk before broadening the platform
+            surface.
+          </p>
+        </div>
+
+        <div class="roadmap">
+          <article class="roadmap-card is-current reveal">
+            <header>
+              <span>Phase 0</span>
+              <small>Current</small>
+            </header>
+            <h3>Define the contract</h3>
+            <p>
+              Resource model, threat boundaries, API, recovery objectives, and
+              explicit non-goals.
+            </p>
+            <ul>
+              <li>System context</li>
+              <li>Initial ADRs</li>
+              <li>OpenAPI contract</li>
+            </ul>
+          </article>
+          <article class="roadmap-card reveal">
+            <header><span>Phase 1</span></header>
+            <h3>Ship one service safely</h3>
+            <p>
+              Git webhook through immutable build, readiness, HTTPS routing,
+              logs, and rollback.
+            </p>
+            <ul>
+              <li>Single node</li>
+              <li>Dockerfile only</li>
+              <li>End-to-end recovery</li>
+            </ul>
+          </article>
+          <article class="roadmap-card reveal">
+            <header><span>Phase 2</span></header>
+            <h3>Harden production</h3>
+            <p>
+              Identity, encrypted secrets, telemetry, scanning, attestations,
+              and restore drills.
+            </p>
+            <ul>
+              <li>Security gates</li>
+              <li>Audit continuity</li>
+              <li>Orphan cleanup</li>
+            </ul>
+          </article>
+          <article class="roadmap-card reveal">
+            <header><span>Phase 3</span></header>
+            <h3>Add nodes with evidence</h3>
+            <p>
+              Scheduling, capacity, labels, drain behavior, and tested node-loss
+              recovery.
+            </p>
+            <ul>
+              <li>Scheduler adapter</li>
+              <li>Failure domains</li>
+              <li>Dependency HA</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section
+        class="section risks-section"
+        id="risks"
+        aria-labelledby="risks-title"
+      >
+        <div class="section-heading reveal">
+          <p class="eyebrow">Known hard parts</p>
+          <h2 id="risks-title">The dashboard does not hide the risks.</h2>
+          <p>
+            A polished experience is only valuable when isolation, failure
+            recovery, and state compatibility are honest.
+          </p>
+        </div>
+
+        <div class="risk-grid">
+          <article class="risk-card reveal">
+            <span>Isolation</span>
+            <h3>Docker is not a hostile-tenant sandbox.</h3>
+            <p>
+              The MVP is single-organization. Public tenancy requires a new
+              threat model and stronger execution boundaries.
+            </p>
+          </article>
+          <article class="risk-card reveal">
+            <span>State</span>
+            <h3>Volumes constrain safe rollout.</h3>
+            <p>
+              Exclusive storage and incompatible migrations can make overlap or
+              rollback unsafe even when containers are healthy.
+            </p>
+          </article>
+          <article class="risk-card reveal">
+            <span>Builds</span>
+            <h3>Dockerfiles execute untrusted code.</h3>
+            <p>
+              Dedicated workers, resource bounds, egress policy, short-lived
+              credentials, and log redaction are required.
+            </p>
+          </article>
+          <article class="risk-card reveal">
+            <span>Operations</span>
+            <h3>Recovery must work on a clean host.</h3>
+            <p>
+              Backups count only after image digests, secrets, audit history,
+              deployment, and rollback survive a restore drill.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="closing-section">
+        <div class="closing-content reveal">
+          <p class="eyebrow">The first demonstration</p>
+          <h2>One Dockerfile. One node. One trustworthy release path.</h2>
+          <p>
+            Build a narrow vertical slice, prove failure recovery, and expand
+            only when the next layer of complexity has a measured reason to
+            exist.
+          </p>
+          <div class="hero-actions">
+            <a
+              class="button button-primary"
+              href="https://github.com/yorkerhodes3/bare-metal-jacket"
+            >
+              Explore the repository
+              <span aria-hidden="true">↗</span>
+            </a>
+            <a
+              class="button button-secondary"
+              href="https://github.com/yorkerhodes3/bare-metal-jacket/blob/main/openapi/control-plane.yaml"
+            >
+              Inspect the API contract
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+        <span>
+          <strong>Bare Metal Jacket</strong>
+          <small>Cloud convenience. Metal control.</small>
+        </span>
+      </div>
+      <p>
+        Research and architecture snapshot · 2026-08-28 ·
+        <a href="https://github.com/yorkerhodes3/bare-metal-jacket"
+          >Source on GitHub</a
+        >
+      </p>
+    </footer>
+  </body>
+</html>

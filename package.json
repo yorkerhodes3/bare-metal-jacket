@@ -1,0 +1,22 @@
+{
+  "name": "bare-metal-jacket",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Contract-first scaffold for a self-hosted, bare-metal developer platform.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "check": "npm run format:check && npm run lint:markdown && npm run lint:openapi && npm test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint:markdown": "markdownlint-cli2",
+    "lint:openapi": "redocly lint openapi/control-plane.yaml",
+    "test": "node scripts/validate-structure.mjs"
+  },
+  "devDependencies": {
+    "@redocly/cli": "2.47.0",
+    "markdownlint-cli2": "0.23.2",
+    "prettier": "3.9.6"
+  }
+}

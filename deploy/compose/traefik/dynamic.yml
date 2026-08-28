@@ -1,0 +1,17 @@
+http:
+  routers:
+    hello:
+      entryPoints:
+        - web
+      rule: PathPrefix(`/`)
+      service: hello
+
+  services:
+    hello:
+      loadBalancer:
+        healthCheck:
+          path: /healthz
+          interval: 10s
+          timeout: 3s
+        servers:
+          - url: http://hello:8080

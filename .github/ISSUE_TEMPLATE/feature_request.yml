@@ -1,0 +1,38 @@
+name: Feature request
+description: Propose a scoped platform capability.
+title: "feature: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe the developer or operator problem rather than only a proposed implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+      description: State the behavior and how it can be verified.
+    validations:
+      required: true
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Earliest appropriate phase
+      options:
+        - Phase 1 - single-node vertical slice
+        - Phase 2 - production foundations
+        - Phase 3 - multi-node operation
+        - Phase 4 - platform services
+    validations:
+      required: true
+  - type: textarea
+    id: security
+    attributes:
+      label: Security and operations
+      description: Identify new privileges, data, failure modes, or recovery requirements.
+    validations:
+      required: true

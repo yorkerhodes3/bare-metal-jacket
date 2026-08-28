@@ -1,0 +1,36 @@
+name: Bug report
+description: Report reproducible incorrect behavior.
+title: "bug: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Do not include secrets, customer data, or vulnerability details.
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Observed behavior
+      description: What happened, including the deployment phase if relevant?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction
+      description: Provide the smallest safe sequence that reproduces the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Revision, host operating system, Docker version, and relevant configuration with secrets removed.
+    validations:
+      required: true

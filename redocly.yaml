@@ -1,0 +1,8 @@
+extends:
+  - recommended
+
+rules:
+  # The repository owner has not selected a project license yet.
+  info-license: off
+  # Placeholder and local servers are intentional during contract design.
+  no-server-example.com: off

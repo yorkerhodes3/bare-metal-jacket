@@ -1,0 +1,817 @@
+openapi: 3.1.0
+info:
+  title: Bare Metal Jacket Control Plane
+  version: 0.1.0
+  summary: Contract for the single-node deployment vertical slice.
+  description: |
+    The control plane stores desired state and coordinates authenticated,
+    auditable build and runtime operations. Secret values are write-only.
+servers:
+  - url: https://api.platform.example.com
+    description: Placeholder production endpoint
+  - url: http://localhost:3000
+    description: Local development
+security:
+  - oidc:
+      - platform
+tags:
+  - name: Health
+    description: Process liveness and dependency readiness.
+  - name: Projects
+    description: Top-level groups of related environments and services.
+  - name: Services
+    description: Desired Docker workload configuration.
+  - name: Deployments
+    description: Build and runtime state transitions.
+  - name: Releases
+    description: Immutable images eligible for activation and rollback.
+
+paths:
+  /healthz:
+    get:
+      operationId: getLiveness
+      summary: Check process liveness
+      tags:
+        - Health
+      security: []
+      responses:
+        "200":
+          description: Process is alive.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+
+  /readyz:
+    get:
+      operationId: getReadiness
+      summary: Check control-plane dependencies
+      tags:
+        - Health
+      security: []
+      responses:
+        "200":
+          description: Required dependencies are ready.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+        "503":
+          description: One or more required dependencies are unavailable.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+
+  /v1/projects:
+    get:
+      operationId: listProjects
+      summary: List projects visible to the caller
+      tags:
+        - Projects
+      parameters:
+        - $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/Limit"
+      responses:
+        "200":
+          description: A page of projects.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectPage"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    post:
+      operationId: createProject
+      summary: Create a project
+      tags:
+        - Projects
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProject"
+      responses:
+        "201":
+          description: Project created.
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri-reference
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          $ref: "#/components/responses/Conflict"
+
+  /v1/projects/{projectId}:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    get:
+      operationId: getProject
+      summary: Get a project
+      tags:
+        - Projects
+      responses:
+        "200":
+          description: Project details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/projects/{projectId}/services:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    get:
+      operationId: listServices
+      summary: List services in a project
+      tags:
+        - Services
+      responses:
+        "200":
+          description: Services in the project.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Service"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    post:
+      operationId: createService
+      summary: Create a Docker service
+      tags:
+        - Services
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateService"
+      responses:
+        "201":
+          description: Service created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Service"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+
+  /v1/services/{serviceId}/deployments:
+    parameters:
+      - $ref: "#/components/parameters/ServiceId"
+    get:
+      operationId: listDeployments
+      summary: List service deployments
+      tags:
+        - Deployments
+      parameters:
+        - $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/Limit"
+      responses:
+        "200":
+          description: A page of deployments.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeploymentPage"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    post:
+      operationId: createDeployment
+      summary: Request a deployment
+      tags:
+        - Deployments
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDeployment"
+      responses:
+        "202":
+          description: Deployment request accepted.
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri-reference
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Deployment"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+
+  /v1/deployments/{deploymentId}:
+    parameters:
+      - $ref: "#/components/parameters/DeploymentId"
+    get:
+      operationId: getDeployment
+      summary: Get deployment state
+      tags:
+        - Deployments
+      responses:
+        "200":
+          description: Current deployment state.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Deployment"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/deployments/{deploymentId}/cancel:
+    parameters:
+      - $ref: "#/components/parameters/DeploymentId"
+    post:
+      operationId: cancelDeployment
+      summary: Request cancellation
+      description: Cancellation remains requested until the active adapter confirms termination.
+      tags:
+        - Deployments
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      responses:
+        "202":
+          description: Cancellation request accepted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Deployment"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+
+  /v1/services/{serviceId}/rollbacks:
+    parameters:
+      - $ref: "#/components/parameters/ServiceId"
+    post:
+      operationId: rollbackService
+      summary: Activate a retained release
+      description: Creates an auditable deployment that targets an immutable retained release.
+      tags:
+        - Releases
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - releaseId
+              properties:
+                releaseId:
+                  $ref: "#/components/schemas/ResourceId"
+      responses:
+        "202":
+          description: Rollback deployment accepted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Deployment"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+
+components:
+  securitySchemes:
+    oidc:
+      type: oauth2
+      description: Placeholder OIDC provider; replace after the identity ADR is accepted.
+      flows:
+        authorizationCode:
+          authorizationUrl: https://identity.example.com/oauth2/authorize
+          tokenUrl: https://identity.example.com/oauth2/token
+          scopes:
+            platform: Manage authorized platform resources.
+
+  parameters:
+    Cursor:
+      name: cursor
+      in: query
+      description: Opaque continuation cursor.
+      schema:
+        type: string
+        maxLength: 512
+    Limit:
+      name: limit
+      in: query
+      description: Maximum number of records to return.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: Caller-generated UUID retained with the operation result.
+      schema:
+        type: string
+        format: uuid
+    ProjectId:
+      name: projectId
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/ResourceId"
+    ServiceId:
+      name: serviceId
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/ResourceId"
+    DeploymentId:
+      name: deploymentId
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/ResourceId"
+
+  responses:
+    ClientError:
+      description: The gateway or control plane rejected the request.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    BadRequest:
+      description: Request validation failed.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    Unauthorized:
+      description: Authentication is missing or invalid.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    NotFound:
+      description: Resource does not exist or is not visible to the caller.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    Conflict:
+      description: Request conflicts with current resource state.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+
+  schemas:
+    ResourceId:
+      type: string
+      format: uuid
+    Timestamp:
+      type: string
+      format: date-time
+    Health:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+    Problem:
+      type: object
+      additionalProperties: false
+      required:
+        - type
+        - title
+        - status
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+          minimum: 400
+          maximum: 599
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        correlationId:
+          type: string
+          format: uuid
+    Project:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - slug
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          $ref: "#/components/schemas/ResourceId"
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        slug:
+          $ref: "#/components/schemas/Slug"
+        createdAt:
+          $ref: "#/components/schemas/Timestamp"
+        updatedAt:
+          $ref: "#/components/schemas/Timestamp"
+    CreateProject:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - slug
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        slug:
+          $ref: "#/components/schemas/Slug"
+    ProjectPage:
+      type: object
+      additionalProperties: false
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Project"
+        nextCursor:
+          type:
+            - string
+            - "null"
+    Slug:
+      type: string
+      minLength: 2
+      maxLength: 63
+      pattern: "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    Service:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - projectId
+        - name
+        - source
+        - runtime
+        - generation
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          $ref: "#/components/schemas/ResourceId"
+        projectId:
+          $ref: "#/components/schemas/ResourceId"
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        source:
+          $ref: "#/components/schemas/ServiceSource"
+        runtime:
+          $ref: "#/components/schemas/RuntimeSpec"
+        generation:
+          type: integer
+          minimum: 1
+        activeReleaseId:
+          oneOf:
+            - $ref: "#/components/schemas/ResourceId"
+            - type: "null"
+        createdAt:
+          $ref: "#/components/schemas/Timestamp"
+        updatedAt:
+          $ref: "#/components/schemas/Timestamp"
+    CreateService:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - source
+        - runtime
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        source:
+          $ref: "#/components/schemas/ServiceSource"
+        runtime:
+          $ref: "#/components/schemas/RuntimeSpec"
+    ServiceSource:
+      oneOf:
+        - $ref: "#/components/schemas/GitSource"
+        - $ref: "#/components/schemas/ImageSource"
+      discriminator:
+        propertyName: type
+        mapping:
+          git: "#/components/schemas/GitSource"
+          image: "#/components/schemas/ImageSource"
+    GitSource:
+      type: object
+      additionalProperties: false
+      required:
+        - type
+        - repositoryId
+        - branch
+        - dockerfilePath
+      properties:
+        type:
+          type: string
+          const: git
+        repositoryId:
+          type: integer
+          minimum: 1
+          description: GitHub repository database identifier.
+        branch:
+          type: string
+          minLength: 1
+          maxLength: 255
+        dockerfilePath:
+          type: string
+          minLength: 1
+          maxLength: 512
+          example: Dockerfile
+        contextPath:
+          type: string
+          maxLength: 512
+          default: .
+    ImageSource:
+      type: object
+      additionalProperties: false
+      required:
+        - type
+        - image
+      properties:
+        type:
+          type: string
+          const: image
+        image:
+          type: string
+          minLength: 1
+          maxLength: 512
+          description: OCI image reference. A digest is required before scheduling.
+          example: registry.example.com/team/service@sha256:0123456789abcdef
+    RuntimeSpec:
+      type: object
+      additionalProperties: false
+      required:
+        - port
+        - cpuMillis
+        - memoryMiB
+        - healthCheck
+      properties:
+        port:
+          type: integer
+          minimum: 1
+          maximum: 65535
+        cpuMillis:
+          type: integer
+          minimum: 50
+          maximum: 16000
+        memoryMiB:
+          type: integer
+          minimum: 32
+          maximum: 65536
+        healthCheck:
+          $ref: "#/components/schemas/HealthCheck"
+        environment:
+          type: object
+          maxProperties: 200
+          additionalProperties:
+            type: string
+            maxLength: 32768
+        secretReferences:
+          type: array
+          maxItems: 100
+          items:
+            $ref: "#/components/schemas/SecretReference"
+    HealthCheck:
+      type: object
+      additionalProperties: false
+      required:
+        - path
+        - intervalSeconds
+        - timeoutSeconds
+        - healthyThreshold
+        - unhealthyThreshold
+      properties:
+        path:
+          type: string
+          pattern: "^/"
+          maxLength: 2048
+          example: /healthz
+        intervalSeconds:
+          type: integer
+          minimum: 2
+          maximum: 300
+        timeoutSeconds:
+          type: integer
+          minimum: 1
+          maximum: 30
+        healthyThreshold:
+          type: integer
+          minimum: 1
+          maximum: 20
+        unhealthyThreshold:
+          type: integer
+          minimum: 1
+          maximum: 20
+    SecretReference:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - secretId
+      properties:
+        name:
+          type: string
+          pattern: "^[A-Z_][A-Z0-9_]*$"
+          maxLength: 255
+        secretId:
+          $ref: "#/components/schemas/ResourceId"
+    CreateDeployment:
+      type: object
+      additionalProperties: false
+      required:
+        - source
+      properties:
+        source:
+          oneOf:
+            - $ref: "#/components/schemas/GitRevision"
+            - $ref: "#/components/schemas/ImageRevision"
+        reason:
+          type: string
+          maxLength: 500
+    GitRevision:
+      type: object
+      additionalProperties: false
+      required:
+        - type
+        - commitSha
+      properties:
+        type:
+          type: string
+          const: git
+        commitSha:
+          type: string
+          pattern: "^[0-9a-f]{40}$"
+    ImageRevision:
+      type: object
+      additionalProperties: false
+      required:
+        - type
+        - image
+      properties:
+        type:
+          type: string
+          const: image
+        image:
+          type: string
+          minLength: 1
+          maxLength: 512
+    DeploymentPhase:
+      type: string
+      enum:
+        - queued
+        - cloning
+        - building
+        - scanning
+        - publishing
+        - scheduling
+        - starting
+        - health_checking
+        - active
+        - cancel_requested
+        - cancelled
+        - failed
+    Deployment:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - serviceId
+        - phase
+        - serviceGeneration
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          $ref: "#/components/schemas/ResourceId"
+        serviceId:
+          $ref: "#/components/schemas/ResourceId"
+        releaseId:
+          oneOf:
+            - $ref: "#/components/schemas/ResourceId"
+            - type: "null"
+        phase:
+          $ref: "#/components/schemas/DeploymentPhase"
+        failedPhase:
+          oneOf:
+            - $ref: "#/components/schemas/DeploymentPhase"
+            - type: "null"
+        failureCode:
+          type:
+            - string
+            - "null"
+          maxLength: 100
+        serviceGeneration:
+          type: integer
+          minimum: 1
+        imageDigest:
+          type:
+            - string
+            - "null"
+          pattern: "^sha256:[0-9a-f]{64}$"
+        createdAt:
+          $ref: "#/components/schemas/Timestamp"
+        updatedAt:
+          $ref: "#/components/schemas/Timestamp"
+        activatedAt:
+          oneOf:
+            - $ref: "#/components/schemas/Timestamp"
+            - type: "null"
+    DeploymentPage:
+      type: object
+      additionalProperties: false
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Deployment"
+        nextCursor:
+          type:
+            - string
+            - "null"

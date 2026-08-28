@@ -1,0 +1,116 @@
+name: bare-metal-jacket
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    ports:
+      - 127.0.0.1:5432:5432
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - control
+
+  redis:
+    image: redis:7.4-alpine
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --requirepass
+      - ${REDIS_PASSWORD}
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - redis-cli -a "$${REDIS_PASSWORD}" ping | grep PONG
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    ports:
+      - 127.0.0.1:6379:6379
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    networks:
+      - control
+
+  registry:
+    image: registry:2.8.3
+    environment:
+      REGISTRY_STORAGE_DELETE_ENABLED: "true"
+    ports:
+      - 127.0.0.1:5000:5000
+    restart: unless-stopped
+    volumes:
+      - registry-data:/var/lib/registry
+    networks:
+      - control
+
+  hello:
+    profiles:
+      - demo
+    build:
+      context: ../../examples/hello-docker
+    environment:
+      PORT: "8080"
+      RELEASE_ID: local-demo
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/healthz', timeout=2)
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - edge
+
+  traefik:
+    profiles:
+      - demo
+    image: traefik:v3.5
+    command:
+      - --entrypoints.web.address=:8080
+      - --providers.file.directory=/etc/traefik/dynamic
+      - --providers.file.watch=true
+      - --accesslog=true
+    depends_on:
+      hello:
+        condition: service_healthy
+    ports:
+      - 8080:8080
+    read_only: true
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    volumes:
+      - ./traefik:/etc/traefik/dynamic:ro
+    networks:
+      - edge
+
+volumes:
+  postgres-data:
+  redis-data:
+  registry-data:
+
+networks:
+  control:
+    internal: true
+  edge:

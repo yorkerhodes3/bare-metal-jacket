@@ -1,0 +1,43 @@
+name: Validate
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  repository:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install validation dependencies
+        run: npm ci
+
+      - name: Validate documentation and contracts
+        run: npm run check
+
+      - name: Test example workload
+        run: python -m unittest discover -s examples/hello-docker -p "test_*.py"
+
+      - name: Validate Compose model
+        run: >-
+          docker compose
+          --env-file deploy/compose/.env.example
+          -f deploy/compose/docker-compose.yml
+          --profile demo
+          config
+
+      - name: Build example workload
+        run: docker build -t bare-metal-jacket/hello-docker:ci examples/hello-docker
