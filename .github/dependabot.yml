@@ -12,7 +12,3 @@ updates:
     directory: /examples/hello-docker
     schedule:
       interval: monthly
-  - package-ecosystem: docker
-    directory: /deploy/compose
-    schedule:
-      interval: monthly
