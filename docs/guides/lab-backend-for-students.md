@@ -38,7 +38,7 @@ GitHub Pages projects
 Shared Lab Gateway
   |-- AI chat proxy and model catalog
   |-- validated public form intake (proposed)
-  |-- project quotas and audit events
+  |-- global/per-source limits and best-effort project attribution
   `-- no arbitrary code or arbitrary database access
 
 Shared foundation
@@ -53,6 +53,12 @@ Shared foundation
 The student sees a small API. The lab maintains containers, networking, model credentials, backups, and host recovery.
 
 This is deliberately not a generic “run anything” endpoint. Narrow capabilities make one shared service safer and easier to operate for many projects.
+
+### A project name is not a password
+
+Every `ethical-tech-colab.github.io/<project>/` page has the same browser origin: `https://ethical-tech-colab.github.io`. A project slug, URL path, public key, or `Referer` can be copied or spoofed and therefore cannot protect private data or enforce a strong identity boundary.
+
+For anonymous shared features, the lab uses the slug for routing and observability, then protects the whole service with model allowlists, global/per-source rate limits, request-size limits, and spending caps. User-specific or sensitive actions require OIDC and dedicated review.
 
 ## What is available today
 
@@ -225,6 +231,8 @@ POST /v1/projects/{project}/forms/{form}/submissions
 ```
 
 It does not expose generic SQL, arbitrary outbound URLs, arbitrary environment variables, or shell execution.
+
+`{project}` selects configuration and provides best-effort attribution; it does not authenticate the caller.
 
 The desired contract is in [lab-gateway.yaml](../../openapi/lab-gateway.yaml). The current AI proxy uses a compatibility discovery document, and the browser helper normalizes it.
 

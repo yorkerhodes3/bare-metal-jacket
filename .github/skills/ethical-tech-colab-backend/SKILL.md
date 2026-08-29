@@ -13,6 +13,7 @@ The goal is **not** to add infrastructure by default. Preserve the GitHub Pages 
 
 - Never place provider keys, database credentials, private bearer tokens, tunnel credentials, or `.env` values in a Pages repository or browser JavaScript.
 - CORS is not authentication. It only controls which browser origins may read responses.
+- A project slug, Pages path, public project key, or `Referer` header is not authentication. All CoLab project pages share one origin, and non-browser clients can supply headers. Use these only for routing and best-effort attribution.
 - Never add an unrestricted fetch proxy, SQL endpoint, shell endpoint, Docker socket, privileged container, or arbitrary host mount.
 - Never claim data is permanent merely because it uses a Docker volume. Host loss requires a verified off-host backup.
 - Never claim the current quick-tunnel AI proxy meets an uptime SLA. Always use discovery so tunnel rotation is transparent.
@@ -148,6 +149,8 @@ const backend = await createLabBackend({
 ```
 
 The helper reads the current discovery document. Never hardcode the generated `trycloudflare.com` hostname.
+
+The `project` value labels the request and selects registered policy. It is public and must not authorize private data, billable usage without a global cap, or administrative action. Anonymous shared capabilities require global/per-source rate limits and spending limits. Strong project or user identity requires OIDC or a dedicated authenticated design.
 
 The current compatibility discovery supports `ai.chat`. The future v1 discovery contract is:
 

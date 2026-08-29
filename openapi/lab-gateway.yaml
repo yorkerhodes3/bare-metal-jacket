@@ -11,6 +11,11 @@ info:
     `ai.chat` is available today through the compatibility discovery document.
     Project-scoped routes and `forms.submit` are proposed until implemented
     and operator-enabled.
+
+    The project path selects configuration and provides best-effort
+    attribution. It does not authenticate an anonymous Pages caller. Private,
+    sensitive, administrative, or uncapped billable behavior requires
+    server-verifiable identity such as OIDC.
 servers:
   - url: https://api.lab.example.org
     description: Stable named-tunnel hostname selected by the lab operator

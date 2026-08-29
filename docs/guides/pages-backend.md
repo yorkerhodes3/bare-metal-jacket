@@ -102,6 +102,8 @@ Every project under that organization shares the same browser origin; URL paths 
 
 CORS prevents a conforming browser on another origin from reading a response. It does not prevent scripts, command-line clients, or another server from sending requests.
 
+For the same reason, a project slug, Pages path, public project key, and `Referer` header are not credentials. They may select policy and label metrics, but strong project/user authorization requires OIDC or another server-verifiable identity.
+
 Choose an authorization model explicitly:
 
 | Use case                | Minimum model                                                                                 |
