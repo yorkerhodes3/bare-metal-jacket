@@ -135,16 +135,21 @@ python -m unittest discover -s examples/hello-docker -p "test_*.py"
 Requirements: Docker Engine with Docker Compose v2.
 
 ```bash
+cp deploy/compose/.env.example deploy/compose/.env
+npm run preflight:deployment
 docker compose \
-  --env-file deploy/compose/.env.example \
+  --env-file deploy/compose/.env \
   -f deploy/compose/docker-compose.yml \
   --profile demo \
-  up --build
+  up --build --detach --wait
+npm run smoke:deployment
 ```
 
 The demo is available at <http://localhost:8080>, PostgreSQL and Redis bind only to loopback, and the registry is available at `localhost:5000`.
 
 The example credentials are for isolated local development only. Create a private environment file with generated values before connecting the stack to any shared network.
+
+For the complete local, CI, SSH-tunneled B3IQ, Cloudflare Tunnel, and `pages-ai-proxy` canary procedures, see [deployment testing](./docs/operations/deployment-testing.md).
 
 ## Initial delivery sequence
 

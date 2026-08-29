@@ -12,7 +12,10 @@
     "format:check": "prettier --check .",
     "lint:markdown": "markdownlint-cli2",
     "lint:openapi": "redocly lint openapi/control-plane.yaml",
-    "test": "node scripts/validate-structure.mjs"
+    "preflight:deployment": "node scripts/deployment-preflight.mjs",
+    "smoke:b3iq-proxy": "node scripts/pages-proxy-smoke.mjs",
+    "smoke:deployment": "node scripts/deployment-smoke.mjs",
+    "test": "node scripts/validate-structure.mjs && node --test tests/deployment/*.test.mjs"
   },
   "devDependencies": {
     "@redocly/cli": "2.47.0",

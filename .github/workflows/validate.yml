@@ -41,3 +41,32 @@ jobs:
 
       - name: Build example workload
         run: docker build -t bare-metal-jacket/hello-docker:ci examples/hello-docker
+
+      - name: Start deployment foundation
+        run: >-
+          docker compose
+          --env-file deploy/compose/.env.example
+          -f deploy/compose/docker-compose.yml
+          --profile demo
+          up --detach --build --wait
+
+      - name: Smoke test deployment foundation
+        run: npm run smoke:deployment
+
+      - name: Capture deployment logs
+        if: failure()
+        run: >-
+          docker compose
+          --env-file deploy/compose/.env.example
+          -f deploy/compose/docker-compose.yml
+          --profile demo
+          logs --no-color
+
+      - name: Stop deployment foundation
+        if: always()
+        run: >-
+          docker compose
+          --env-file deploy/compose/.env.example
+          -f deploy/compose/docker-compose.yml
+          --profile demo
+          down --volumes --remove-orphans
