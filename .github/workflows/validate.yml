@@ -54,6 +54,8 @@ jobs:
         run: npm run smoke:deployment
 
       - name: Create and verify foundation backup
+        env:
+          BMJ_ENV_FILE: deploy/compose/.env.example
         run: |
           npm run backup:foundation
           npm run verify:backup
