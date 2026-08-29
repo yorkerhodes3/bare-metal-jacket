@@ -297,27 +297,33 @@ Remove-Item Env:PAGES_AI_PROXY_MODEL
 
 The live test sends only `Reply with exactly BMJ_OK` with a 12-token limit.
 
-### Canary findings to fix before platform onboarding
+### Canary findings and remediation
 
-The 2026-08-28 probe found:
+The initial 2026-08-28 probe found:
 
 - the service and public quick tunnel are healthy;
 - allowed CORS preflight returns 204 and a blocked POST returns 403;
 - `gemma3:12b` returned `BMJ_OK` through the public proxy;
-- a cloud request without an explicit local model returned 410 because the advertised GitHub Models upstream has been retired;
-- the public discovery document still advertises the retired cloud models;
-- the active port is 8799, while older B3IQ instructions say 8788;
+- the retired GitHub Models upstream and stale discovery created failed cloud requests;
+- the active port and older B3IQ instructions did not agree;
 - the Node service listens on all interfaces (`*:8799`) even though only the tunnel needs loopback; and
-- `systemd-analyze security` reports exposure level 8.6, so the unit needs additional sandboxing.
+- the initial systemd unit had an exposure score of 8.6.
 
-Before using the proxy as a Bare Metal Jacket acceptance workload:
+Remediation completed on 2026-08-29:
 
-1. align the documented and configured port;
-2. remove retired cloud models from discovery or configure a working cloud upstream;
-3. add a configurable bind host and use `127.0.0.1` for the systemd deployment;
-4. strengthen the systemd unit with a dedicated unprivileged user, private temporary directories, address-family restrictions, and tighter filesystem policy;
-5. replace the rotating quick tunnel with a named tunnel for stable acceptance; and
-6. add a Dockerfile with a non-root user and health check in the proxy repository.
+- B3IQ configuration and documentation use port 8799;
+- discovery no longer advertises the retired cloud models;
+- a write-enabled deploy key scoped only to `Ethical-Tech-CoLab/War-Games` republishes discovery after tunnel rotation;
+- a five-minute watchdog checks the public endpoint and restarts an unhealthy quick tunnel;
+- a forced tunnel failure successfully created a new hostname and republished it; and
+- systemd sandboxing reduced the proxy exposure score from 8.6 to 3.0.
+
+Remaining before the proxy qualifies as a production-like acceptance workload:
+
+1. add a configurable bind host and use `127.0.0.1` for the Node listener;
+2. replace the quick tunnel with a named tunnel and stable DNS;
+3. run the service under a dedicated proxy identity rather than the general B3IQ login user; and
+4. add a non-root Dockerfile with a health check in the proxy repository.
 
 ## Phase 1 acceptance suite
 

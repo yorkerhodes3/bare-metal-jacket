@@ -139,4 +139,4 @@ The service is minimally usable for a real Pages backend only when all are true:
 - blocked-origin and rate-limit tests pass; and
 - owner, alert destination, RPO, and RTO are recorded.
 
-The current quick-tunnel `pages-ai-proxy` is a functional canary, but it does not pass the named-tunnel launch gate and therefore should not be described as a 99.0% service.
+The current quick-tunnel `pages-ai-proxy` is a functional canary. A five-minute B3IQ watchdog restarts failed quick tunnels and a repository-scoped deploy key republishes the rotated URL. This was verified with a forced tunnel failure and live local-model request. It still does not pass the named-tunnel launch gate and therefore should not be described as a 99.0% service.

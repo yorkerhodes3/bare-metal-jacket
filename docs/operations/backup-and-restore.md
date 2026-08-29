@@ -133,6 +133,8 @@ powershell -NoProfile -ExecutionPolicy Bypass `
 
 The default target is `$HOME\BareMetalJacketBackups\Local`, and the transcript is written to `%LOCALAPPDATA%\BareMetalJacket\foundation-backup.log`. This protects against accidental container or volume replacement, but it is still on the same workstation and is not an off-host disaster-recovery copy.
 
+The provisioned development workstation also has a daily scheduled task named `Bare Metal Jacket Local Backup` that runs this wrapper at 04:15 when the user is logged in, or when Windows next makes the missed task available.
+
 ## Off-host protection
 
 Use three copies across at least two media/failure domains, with one off-site or independently administered copy.
