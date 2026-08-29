@@ -18,6 +18,7 @@ const requiredPaths = [
   "scripts/deployment-preflight.mjs",
   "scripts/deployment-smoke.mjs",
   "scripts/pages-proxy-smoke.mjs",
+  "scripts/start-local-foundation.ps1",
   "tests/deployment/smoke-harness.test.mjs",
 ];
 

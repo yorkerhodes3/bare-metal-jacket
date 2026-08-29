@@ -21,6 +21,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
     networks:
       - control
+      - host-access
 
   redis:
     image: redis:7.4-alpine
@@ -46,6 +47,7 @@ services:
       - redis-data:/data
     networks:
       - control
+      - host-access
 
   registry:
     image: registry:2.8.3

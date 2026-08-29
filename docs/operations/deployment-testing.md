@@ -33,11 +33,12 @@ Run the stages in order. Do not expose a host publicly until the loopback and SS
 
 As observed on 2026-08-28:
 
-- Node.js and Python are installed;
+- Node.js, Python, Docker Desktop 4.88.1, Docker CLI 29.7.2, Compose 5.4.0, and WSL 2.7.12 are installed;
 - repository checks and the sample process tests pass;
-- Docker, Podman, and a WSL distribution are not installed.
+- Hyper-V, Virtual Machine Platform, and the WSL optional feature are enabled; and
+- Windows has a pending restart before the Linux container backend can start.
 
-Stage 0 works now. Stage 1 requires a Docker Engine.
+Stage 0 works now. Stage 1 is staged with generated local secrets and can begin after the required Windows restart.
 
 ### Install the missing runtime
 
@@ -59,6 +60,8 @@ The recommended Windows path is WSL 2 plus Docker Desktop. This changes the mach
    ```
 
 An alternative is a dedicated Linux VM. Do not expose an unauthenticated Docker TCP socket to make the Windows client work.
+
+This workstation has a per-user scheduled task named `Bare Metal Jacket Local Foundation`. One minute after the next login it runs [start-local-foundation.ps1](../../scripts/start-local-foundation.ps1), starts Docker Desktop, waits for its backend, starts the Compose project, and records a smoke-test result in `%LOCALAPPDATA%\BareMetalJacket\foundation-startup.log`.
 
 ### Run Stage 0
 
@@ -149,10 +152,12 @@ The tested B3IQ node is reachable through its configured SSH host name and curre
 - 60 GiB RAM and more than 700 GiB free disk;
 - passwordless non-interactive `sudo`;
 - Node.js 20, Git, systemd, Cloudflare Tunnel, and Ollama;
-- ports 80, 443, 5000, and 8080 available; and
-- no Docker Engine or Compose plugin.
+- Docker Engine 29.7.2 and Compose 5.5.0 from Docker's signed Ubuntu repository; and
+- the five-service foundation running with `unless-stopped` restart policies.
 
-The existing `pages-ai-proxy` service is active on port 8799. Port 8788, which still appears in parts of its runbook, is not active.
+Traefik, PostgreSQL, Redis, and the registry are published only on B3IQ loopback. The existing `pages-ai-proxy` service remains active on port 8799. Port 8788, which still appears in parts of its runbook, is not active.
+
+The host reports a pending Ubuntu kernel update. Do not reboot it without coordinating the existing proxy, tunnel, model, and other workloads.
 
 ### Install Docker Engine during a maintenance window
 
@@ -204,14 +209,16 @@ Keep `EDGE_BIND_ADDRESS=127.0.0.1`. PostgreSQL, Redis, the registry, and Traefik
 ### Run Stage 1 on B3IQ
 
 ```bash
-npm ci
-npm run preflight:deployment
-docker compose \
+sudo env \
+  BMJ_ENV_FILE="$PWD/deploy/compose/.env" \
+  BMJ_COMPOSE_FILE="$PWD/deploy/compose/docker-compose.yml" \
+  node scripts/deployment-preflight.mjs
+sudo docker compose \
   --env-file deploy/compose/.env \
   -f deploy/compose/docker-compose.yml \
   --profile demo \
   up --detach --build --wait
-npm run smoke:deployment
+node scripts/deployment-smoke.mjs
 ```
 
 ### Run Stage 2 through an SSH tunnel
