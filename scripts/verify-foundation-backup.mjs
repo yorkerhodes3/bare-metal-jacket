@@ -170,11 +170,13 @@ try {
       await run("docker", [
         "exec",
         restoreContainer,
-        "pg_isready",
+        "psql",
         "--username",
         "postgres",
         "--dbname",
         "restore",
+        "--command",
+        "SELECT 1;",
       ]);
       ready = true;
       break;
