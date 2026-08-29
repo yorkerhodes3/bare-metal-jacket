@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yorkerhodes3.github.io/bare-metal-jacket/schemas/lab-backend-project.schema.json",
+  "title": "Ethical Tech CoLab backend project",
+  "description": "Agent-readable request for shared lab capabilities or a dedicated container.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "apiVersion": {
+      "const": "baremetaljacket.dev/v1alpha1"
+    },
+    "kind": {
+      "const": "LabBackendProject"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slug", "displayName", "repository", "owner"],
+      "properties": {
+        "slug": {
+          "$ref": "#/$defs/slug"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "repository": {
+          "type": "string",
+          "pattern": "^https://github\\.com/Ethical-Tech-CoLab/[A-Za-z0-9._-]+/?$"
+        },
+        "owner": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$"
+        }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tier", "pages", "capabilities", "data", "serviceLevel"],
+      "properties": {
+        "tier": {
+          "enum": ["shared", "dedicated"]
+        },
+        "pages": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["origin", "path"],
+          "properties": {
+            "origin": {
+              "const": "https://ethical-tech-colab.github.io"
+            },
+            "path": {
+              "type": "string",
+              "pattern": "^/[A-Za-z0-9._-]+/$"
+            }
+          }
+        },
+        "capabilities": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "ai.chat",
+              "forms.submit",
+              "custom.api",
+              "auth.user",
+              "files.store",
+              "jobs.background"
+            ]
+          }
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["classification", "containsPersonalData", "durability"],
+          "properties": {
+            "classification": {
+              "enum": ["public", "internal", "sensitive"]
+            },
+            "containsPersonalData": {
+              "type": "boolean"
+            },
+            "durability": {
+              "enum": ["ephemeral", "daily-backup"]
+            },
+            "retentionDays": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 3650
+            }
+          }
+        },
+        "serviceLevel": {
+          "const": "lab-99"
+        },
+        "dedicated": {
+          "$ref": "#/$defs/dedicated"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "spec": {
+            "properties": {
+              "tier": {
+                "const": "dedicated"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "spec": {
+            "required": ["dedicated"]
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "slug": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 63,
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    },
+    "dedicated": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dockerfile",
+        "port",
+        "healthPath",
+        "readinessPath",
+        "cpuMillis",
+        "memoryMiB",
+        "storage"
+      ],
+      "properties": {
+        "dockerfile": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 65535
+        },
+        "healthPath": {
+          "type": "string",
+          "pattern": "^/"
+        },
+        "readinessPath": {
+          "type": "string",
+          "pattern": "^/"
+        },
+        "cpuMillis": {
+          "type": "integer",
+          "minimum": 50,
+          "maximum": 4000
+        },
+        "memoryMiB": {
+          "type": "integer",
+          "minimum": 64,
+          "maximum": 8192
+        },
+        "storage": {
+          "type": "array",
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "mountPath", "sizeGiB"],
+            "properties": {
+              "name": {
+                "$ref": "#/$defs/slug"
+              },
+              "mountPath": {
+                "type": "string",
+                "pattern": "^/"
+              },
+              "sizeGiB": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

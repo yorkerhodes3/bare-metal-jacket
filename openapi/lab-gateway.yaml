@@ -1,0 +1,419 @@
+openapi: 3.1.0
+info:
+  title: Ethical Tech CoLab Shared Backend API
+  version: 0.1.0
+  summary: Proposed capability-based API for GitHub Pages projects.
+  description: |
+    This contract describes the narrow shared gateway that follows the live
+    AI proxy. It intentionally excludes generic SQL, arbitrary outbound fetch,
+    shell access, and arbitrary secret access.
+
+    `ai.chat` is available today through the compatibility discovery document.
+    Project-scoped routes and `forms.submit` are proposed until implemented
+    and operator-enabled.
+servers:
+  - url: https://api.lab.example.org
+    description: Stable named-tunnel hostname selected by the lab operator
+security: []
+tags:
+  - name: Health
+    description: Public process and dependency status.
+  - name: Project
+    description: Browser-safe project configuration.
+  - name: AI
+    description: Bounded server-side model access.
+  - name: Forms
+    description: Validated append-only public submissions.
+
+paths:
+  /healthz:
+    get:
+      operationId: getLabGatewayHealth
+      summary: Check process liveness
+      tags:
+        - Health
+      responses:
+        "200":
+          $ref: "#/components/responses/Healthy"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+
+  /readyz:
+    get:
+      operationId: getLabGatewayReadiness
+      summary: Check required dependencies
+      tags:
+        - Health
+      responses:
+        "200":
+          $ref: "#/components/responses/Healthy"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+        "503":
+          $ref: "#/components/responses/Unavailable"
+
+  /v1/projects/{projectSlug}/config:
+    parameters:
+      - $ref: "#/components/parameters/ProjectSlug"
+    get:
+      operationId: getLabProjectConfig
+      summary: Get browser-safe project capabilities and limits
+      tags:
+        - Project
+      responses:
+        "200":
+          description: Project configuration without secret values.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectConfig"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/projects/{projectSlug}/ai/models:
+    parameters:
+      - $ref: "#/components/parameters/ProjectSlug"
+    get:
+      operationId: listLabProjectModels
+      summary: List models approved for the project
+      tags:
+        - AI
+      responses:
+        "200":
+          description: Approved model catalog.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Model"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/projects/{projectSlug}/ai/chat:
+    parameters:
+      - $ref: "#/components/parameters/ProjectSlug"
+    post:
+      operationId: createLabProjectChat
+      summary: Run one bounded chat completion
+      description: |
+        The gateway chooses a project-approved local or cloud upstream and
+        injects any provider credential server-side. The browser never sends
+        a provider key.
+      tags:
+        - AI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatRequest"
+      responses:
+        "200":
+          description: OpenAI-compatible chat completion.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatResponse"
+        "400":
+          $ref: "#/components/responses/ClientError"
+        "413":
+          $ref: "#/components/responses/TooLarge"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+        "503":
+          $ref: "#/components/responses/Unavailable"
+
+  /v1/projects/{projectSlug}/forms/{formSlug}/submissions:
+    parameters:
+      - $ref: "#/components/parameters/ProjectSlug"
+      - $ref: "#/components/parameters/FormSlug"
+      - $ref: "#/components/parameters/IdempotencyKey"
+    post:
+      operationId: submitLabProjectForm
+      summary: Store one schema-validated form submission
+      description: |
+        Proposed shared capability. It is append-only from the public browser.
+        Reading, updating, exporting, and deleting submissions require an
+        operator or future authenticated project role.
+      tags:
+        - Forms
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FormSubmission"
+      responses:
+        "202":
+          description: Submission accepted and durably recorded.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmissionReceipt"
+        "400":
+          $ref: "#/components/responses/ClientError"
+        "413":
+          $ref: "#/components/responses/TooLarge"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+        "503":
+          $ref: "#/components/responses/Unavailable"
+
+components:
+  parameters:
+    ProjectSlug:
+      name: projectSlug
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/Slug"
+    FormSlug:
+      name: formSlug
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/Slug"
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: Browser-generated UUID retained with the submission result.
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    Healthy:
+      description: The requested health condition is satisfied.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Health"
+    ClientError:
+      description: Request validation or policy failed.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    NotFound:
+      description: Project or capability was not registered.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    TooLarge:
+      description: The project request-size limit was exceeded.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    RateLimited:
+      description: The project or source rate limit was exceeded.
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+            minimum: 1
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    Unavailable:
+      description: A required gateway or upstream dependency is unavailable.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+
+  schemas:
+    Slug:
+      type: string
+      minLength: 2
+      maxLength: 63
+      pattern: "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    Health:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          const: ok
+    Problem:
+      type: object
+      additionalProperties: false
+      required:
+        - type
+        - title
+        - status
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+          minimum: 400
+          maximum: 599
+        detail:
+          type: string
+        requestId:
+          type: string
+          format: uuid
+    ProjectConfig:
+      type: object
+      additionalProperties: false
+      required:
+        - project
+        - serviceLevel
+        - capabilities
+      properties:
+        project:
+          $ref: "#/components/schemas/Slug"
+        serviceLevel:
+          type: string
+          const: lab-99
+        capabilities:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+            enum:
+              - ai.chat
+              - forms.submit
+        limits:
+          type: object
+          additionalProperties:
+            type:
+              - string
+              - number
+              - boolean
+        maintenance:
+          type:
+            - object
+            - "null"
+          additionalProperties: false
+          required:
+            - message
+          properties:
+            message:
+              type: string
+            retryAfterSeconds:
+              type: integer
+              minimum: 1
+    Model:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - label
+        - source
+      properties:
+        id:
+          type: string
+          minLength: 1
+          maxLength: 255
+        label:
+          type: string
+          minLength: 1
+          maxLength: 255
+        source:
+          type: string
+          enum:
+            - local
+            - cloud
+    ChatMessage:
+      type: object
+      additionalProperties: false
+      required:
+        - role
+        - content
+      properties:
+        role:
+          type: string
+          enum:
+            - system
+            - user
+            - assistant
+        content:
+          type: string
+          minLength: 1
+          maxLength: 50000
+    ChatRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - model
+        - messages
+      properties:
+        model:
+          type: string
+          minLength: 1
+          maxLength: 255
+        messages:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            $ref: "#/components/schemas/ChatMessage"
+        max_tokens:
+          type: integer
+          minimum: 1
+          maximum: 4096
+          default: 512
+        temperature:
+          type: number
+          minimum: 0
+          maximum: 2
+          default: 0.7
+    ChatResponse:
+      type: object
+      additionalProperties: true
+      required:
+        - choices
+      properties:
+        model:
+          type: string
+        choices:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            additionalProperties: true
+            required:
+              - message
+            properties:
+              message:
+                $ref: "#/components/schemas/ChatMessage"
+    FormSubmission:
+      type: object
+      additionalProperties: false
+      required:
+        - values
+      properties:
+        values:
+          type: object
+          maxProperties: 100
+          additionalProperties: true
+    SubmissionReceipt:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - acceptedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        acceptedAt:
+          type: string
+          format: date-time

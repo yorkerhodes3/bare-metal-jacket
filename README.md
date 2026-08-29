@@ -31,6 +31,17 @@ This repository is in **Phase 0: product, contract, and threat definition**. It 
 
 The original concept is preserved in [CONCEPT-IDEA.md](./CONCEPT-IDEA.md).
 
+## For Ethical Tech CoLab students
+
+Keep your frontend on GitHub Pages. Add only the smallest server-side capability your browser cannot safely provide.
+
+- Start with [the student lab backend guide](./docs/guides/lab-backend-for-students.md).
+- Give your coding agent the [`ethical-tech-colab-backend` skill](./.github/skills/ethical-tech-colab-backend/SKILL.md).
+- Use the [published browser helper](https://yorkerhodes3.github.io/bare-metal-jacket/sdk/lab-backend.js) for shared AI access.
+- Open a [Lab backend request](https://github.com/yorkerhodes3/bare-metal-jacket/issues/new?template=lab_backend_request.yml) when the manifest is ready.
+
+The default is one shared lab gateway for narrow, approved capabilities. Projects needing accounts, sensitive data, uploads, background jobs, or custom server behavior receive a reviewed dedicated container instead.
+
 ## Design principles
 
 1. **Docker-native:** accept a Dockerfile or a prebuilt OCI image.

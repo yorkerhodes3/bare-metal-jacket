@@ -1,0 +1,25 @@
+{
+  "$schema": "https://yorkerhodes3.github.io/bare-metal-jacket/schemas/lab-backend-project.schema.json",
+  "apiVersion": "baremetaljacket.dev/v1alpha1",
+  "kind": "LabBackendProject",
+  "metadata": {
+    "slug": "my-project",
+    "displayName": "My Project",
+    "repository": "https://github.com/Ethical-Tech-CoLab/my-project",
+    "owner": "github-username"
+  },
+  "spec": {
+    "tier": "shared",
+    "pages": {
+      "origin": "https://ethical-tech-colab.github.io",
+      "path": "/my-project/"
+    },
+    "capabilities": ["ai.chat"],
+    "data": {
+      "classification": "public",
+      "containsPersonalData": false,
+      "durability": "ephemeral"
+    },
+    "serviceLevel": "lab-99"
+  }
+}

@@ -1,5 +1,7 @@
 # Using a real backend from a GitHub Pages application
 
+For the student-first decision and setup path, start with [The CoLab backend](./lab-backend-for-students.md).
+
 ## When a Pages application needs a backend
 
 GitHub Pages serves static files. It cannot safely hold a provider key, run server-side authorization, write a database, process a queue, or make a private network request.
@@ -49,6 +51,8 @@ A Pages application should not hardcode an experimental backend URL in its JavaS
   "updatedAt": "2026-08-29T00:00:00Z"
 }
 ```
+
+The shared lab helper uses the [backend discovery schema](../../site/schemas/lab-backend-discovery.schema.json). The current AI proxy's `proxyUrl` document is a supported compatibility shape; new shared capabilities use the v1 `endpoints` object.
 
 The app fetches it at startup:
 

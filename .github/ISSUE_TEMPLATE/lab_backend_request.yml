@@ -1,0 +1,105 @@
+name: Lab backend request
+description: Request the minimum shared capability or a reviewed dedicated container for a CoLab Pages project.
+title: "lab backend: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Keep your frontend on GitHub Pages. This request adds only the server-side capability the browser cannot safely provide.
+
+        Do not paste API keys, passwords, personal data, or other secrets into this issue.
+  - type: input
+    id: repository
+    attributes:
+      label: Project repository
+      description: Link the Ethical Tech CoLab GitHub repository.
+      placeholder: https://github.com/Ethical-Tech-CoLab/my-project
+    validations:
+      required: true
+  - type: input
+    id: pages
+    attributes:
+      label: Published Pages site
+      placeholder: https://ethical-tech-colab.github.io/my-project/
+    validations:
+      required: true
+  - type: input
+    id: manifest
+    attributes:
+      label: Backend manifest
+      description: Link `.lab/backend.json` in the project repository.
+      placeholder: https://github.com/Ethical-Tech-CoLab/my-project/blob/main/.lab/backend.json
+    validations:
+      required: true
+  - type: checkboxes
+    id: capabilities
+    attributes:
+      label: Needed capabilities
+      options:
+        - label: AI chat or model access (`ai.chat`, live shared capability)
+        - label: Validated form submission (`forms.submit`, proposed shared capability)
+        - label: Custom API routes
+        - label: User authentication or private records
+        - label: File uploads
+        - label: Background or scheduled work
+  - type: dropdown
+    id: classification
+    attributes:
+      label: Data classification
+      description: This maps to `spec.data.classification` in the manifest.
+      options:
+        - Public
+        - Internal
+        - Sensitive or regulated data
+    validations:
+      required: true
+  - type: dropdown
+    id: personal_data
+    attributes:
+      label: Does this include personal data?
+      description: This maps to `spec.data.containsPersonalData` in the manifest.
+      options:
+        - "No"
+        - "Yes"
+    validations:
+      required: true
+  - type: dropdown
+    id: durability
+    attributes:
+      label: What happens if stored data is lost?
+      options:
+        - No data is stored
+        - Data may be lost after a restart
+        - Up to 24 hours of data loss is acceptable
+        - Less than 24 hours of data loss is acceptable
+        - No data loss is acceptable
+    validations:
+      required: true
+  - type: textarea
+    id: user_story
+    attributes:
+      label: User story
+      description: Explain what a visitor does and what the backend must do. Avoid infrastructure terminology.
+      placeholder: When a visitor submits a public research question, the site asks a lab model to suggest three refinements and displays them.
+    validations:
+      required: true
+  - type: textarea
+    id: expected_usage
+    attributes:
+      label: Expected use
+      description: Approximate users, requests per session, largest request, and whether this is a class demo or ongoing tool.
+    validations:
+      required: true
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Safety checks
+      options:
+        - label: I have not put a provider key or backend secret in the Pages repository.
+          required: true
+        - label: I understand the shared lab service is best-effort and not commercial hosting.
+          required: true
+        - label: I will not collect personal or sensitive data until an operator approves the design.
+          required: true

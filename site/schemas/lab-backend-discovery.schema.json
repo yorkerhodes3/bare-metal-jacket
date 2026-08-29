@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yorkerhodes3.github.io/bare-metal-jacket/schemas/lab-backend-discovery.schema.json",
+  "title": "Ethical Tech CoLab backend discovery",
+  "description": "Browser-safe runtime endpoints and enabled capabilities for one lab project.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "project",
+    "mode",
+    "capabilities",
+    "endpoints",
+    "updatedAt"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "project": {
+      "$ref": "#/$defs/slug"
+    },
+    "mode": {
+      "enum": ["shared", "dedicated"]
+    },
+    "capabilities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": ["ai.chat", "forms.submit"]
+      }
+    },
+    "endpoints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["health", "config"],
+      "properties": {
+        "health": {
+          "$ref": "#/$defs/httpsUrl"
+        },
+        "config": {
+          "$ref": "#/$defs/httpsUrl"
+        },
+        "models": {
+          "$ref": "#/$defs/httpsUrl"
+        },
+        "aiChat": {
+          "$ref": "#/$defs/httpsUrl"
+        },
+        "formSubmissions": {
+          "type": "string",
+          "format": "uri-template",
+          "pattern": "^https://.*\\{project\\}.*\\{form\\}.*$"
+        }
+      }
+    },
+    "models": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 255
+      }
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "slug": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 63,
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    },
+    "httpsUrl": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://"
+    }
+  }
+}

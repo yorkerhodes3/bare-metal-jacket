@@ -2,6 +2,7 @@
   "name": "bare-metal-jacket",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "description": "Contract-first scaffold for a self-hosted, bare-metal developer platform.",
   "engines": {
     "node": ">=22"
@@ -11,12 +12,14 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint:markdown": "markdownlint-cli2",
-    "lint:openapi": "redocly lint openapi/control-plane.yaml",
+    "lint:openapi": "redocly lint openapi/control-plane.yaml openapi/lab-gateway.yaml",
     "backup:foundation": "node scripts/backup-foundation.mjs",
     "preflight:deployment": "node scripts/deployment-preflight.mjs",
+    "scaffold:lab-project": "node scripts/scaffold-lab-project.mjs",
     "smoke:b3iq-proxy": "node scripts/pages-proxy-smoke.mjs",
     "smoke:deployment": "node scripts/deployment-smoke.mjs",
-    "test": "node scripts/validate-structure.mjs && node --test tests/deployment/*.test.mjs",
+    "test": "node scripts/validate-structure.mjs && node --test tests/deployment/*.test.mjs tests/lab-client/*.test.mjs",
+    "validate:lab-project": "node scripts/validate-lab-project.mjs",
     "verify:backup": "node scripts/verify-foundation-backup.mjs"
   },
   "devDependencies": {
