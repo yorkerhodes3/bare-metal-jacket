@@ -145,7 +145,12 @@ const metadata = {
   },
   projectName,
   source: {
-    gitCommit: runText("git", ["rev-parse", "HEAD"]),
+    gitCommit: runText("git", [
+      "-c",
+      `safe.directory=${process.cwd()}`,
+      "rev-parse",
+      "HEAD",
+    ]),
     composeFile: basename(composeFile),
     composeConfigSha256: createHash("sha256").update(config).digest("hex"),
   },
