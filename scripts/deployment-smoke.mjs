@@ -85,6 +85,7 @@ try {
     `\nDeployment smoke passed for ${baseUrl.origin} at release ${expectedRelease}.`,
   );
 } catch (error) {
-  console.error(`FAIL  ${error.message}`);
+  const detail = error.cause?.message ?? error.message;
+  console.error(`FAIL  ${detail}`);
   process.exitCode = 1;
 }
