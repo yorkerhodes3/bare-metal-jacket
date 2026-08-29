@@ -2,7 +2,9 @@
 
 - [Architecture](./architecture/system-context.md)
 - [Architecture decisions](./adr/)
-- [Operations](./operations/backup-and-restore.md)
+- [Pages backend guide](./guides/pages-backend.md)
+- [Backup and restore](./operations/backup-and-restore.md)
+- [Lab service level](./operations/lab-service-level.md)
 - [Competitive research](./research/competitive-landscape.md)
 - [Security](./security/threat-model.md)
 

@@ -53,6 +53,12 @@ jobs:
       - name: Smoke test deployment foundation
         run: npm run smoke:deployment
 
+      - name: Create and verify foundation backup
+        run: |
+          npm run backup:foundation
+          npm run verify:backup
+          npm run smoke:deployment
+
       - name: Capture deployment logs
         if: failure()
         run: >-

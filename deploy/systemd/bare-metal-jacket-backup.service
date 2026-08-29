@@ -1,0 +1,22 @@
+[Unit]
+Description=Bare Metal Jacket foundation backup
+Requires=docker.service
+After=docker.service network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=__APP_DIR__
+ExecStart=/usr/bin/node __APP_DIR__/scripts/backup-foundation.mjs --output __BACKUP_DIR__
+ExecStartPost=/usr/bin/node __APP_DIR__/scripts/verify-foundation-backup.mjs --backup __BACKUP_DIR__
+UMask=0027
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=__BACKUP_DIR__
+
+[Install]
+WantedBy=multi-user.target

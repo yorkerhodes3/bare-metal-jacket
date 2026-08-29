@@ -151,6 +151,8 @@ The example credentials are for isolated local development only. Create a privat
 
 For the complete local, CI, SSH-tunneled B3IQ, Cloudflare Tunnel, and `pages-ai-proxy` canary procedures, see [deployment testing](./docs/operations/deployment-testing.md).
 
+Building a static application that needs secrets, durable data, authentication, uploads, or a local model? Start with [the GitHub Pages backend guide](./docs/guides/pages-backend.md), then review [the minimum lab service level](./docs/operations/lab-service-level.md) and [backup and restore](./docs/operations/backup-and-restore.md).
+
 ## Initial delivery sequence
 
 1. Review and accept the three initial ADRs.
