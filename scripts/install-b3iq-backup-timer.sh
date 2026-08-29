@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-APP_DIR="${BMJ_APP_DIR:-$HOME/bare-metal-jacket}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+APP_DIR="${BMJ_APP_DIR:-$REPO_DIR}"
 BACKUP_DIR="${BMJ_BACKUP_DIR:-/var/backups/bare-metal-jacket}"
 BACKUP_GROUP="${BMJ_BACKUP_GROUP:-${SUDO_USER:-$USER}}"
 SERVICE_SOURCE="$APP_DIR/deploy/systemd/bare-metal-jacket-backup.service"
