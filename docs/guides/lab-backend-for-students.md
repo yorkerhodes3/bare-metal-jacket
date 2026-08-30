@@ -234,9 +234,9 @@ It does not expose generic SQL, arbitrary outbound URLs, arbitrary environment v
 
 `{project}` selects configuration and provides best-effort attribution; it does not authenticate the caller.
 
-The desired contract is in [lab-gateway.yaml](../../openapi/lab-gateway.yaml). The current AI proxy uses a compatibility discovery document, and the browser helper normalizes it.
+The desired contract is in the [shared lab gateway OpenAPI document](https://github.com/yorkerhodes3/bare-metal-jacket/blob/main/openapi/lab-gateway.yaml). The current AI proxy uses a compatibility discovery document, and the browser helper normalizes it.
 
-The v1 discovery document is validated by [lab-backend-discovery.schema.json](../../site/schemas/lab-backend-discovery.schema.json). Its endpoint keys are `health`, `config`, `models`, `aiChat`, and the v1-only form URI template `formSubmissions`.
+The v1 discovery document is validated by the published [lab backend discovery schema](https://yorkerhodes3.github.io/bare-metal-jacket/schemas/lab-backend-discovery.schema.json). Its endpoint keys are `health`, `config`, `models`, `aiChat`, and the v1-only form URI template `formSubmissions`.
 
 ## When your project needs its own container
 

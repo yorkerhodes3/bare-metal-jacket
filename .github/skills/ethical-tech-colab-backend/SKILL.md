@@ -308,8 +308,8 @@ Use plain language:
 
 ## References
 
-- Student guide: `docs/guides/lab-backend-for-students.md`
-- Browser backend guide: `docs/guides/pages-backend.md`
-- Service level: `docs/operations/lab-service-level.md`
-- Backup and restore: `docs/operations/backup-and-restore.md`
-- Shared API proposal: `openapi/lab-gateway.yaml`
+- [Student guide](https://github.com/yorkerhodes3/bare-metal-jacket/blob/main/docs/guides/lab-backend-for-students.md)
+- [Browser backend guide](https://github.com/yorkerhodes3/bare-metal-jacket/blob/main/docs/guides/pages-backend.md)
+- [Lab service level](https://github.com/yorkerhodes3/bare-metal-jacket/blob/main/docs/operations/lab-service-level.md)
+- [Backup and restore](https://github.com/yorkerhodes3/bare-metal-jacket/blob/main/docs/operations/backup-and-restore.md)
+- [Shared API proposal](https://github.com/yorkerhodes3/bare-metal-jacket/blob/main/openapi/lab-gateway.yaml)

@@ -1,6 +1,6 @@
 # Using a real backend from a GitHub Pages application
 
-For the student-first decision and setup path, start with [The CoLab backend](./lab-backend-for-students.md).
+For the student-first decision and setup path, start with [The CoLab backend](https://github.com/yorkerhodes3/bare-metal-jacket/blob/main/docs/guides/lab-backend-for-students.md).
 
 ## When a Pages application needs a backend
 
@@ -52,7 +52,7 @@ A Pages application should not hardcode an experimental backend URL in its JavaS
 }
 ```
 
-The shared lab helper uses the [backend discovery schema](../../site/schemas/lab-backend-discovery.schema.json). The current AI proxy's `proxyUrl` document is a supported compatibility shape; new shared capabilities use the v1 `endpoints` object.
+The shared lab helper uses the published [backend discovery schema](https://yorkerhodes3.github.io/bare-metal-jacket/schemas/lab-backend-discovery.schema.json). The current AI proxy's `proxyUrl` document is a supported compatibility shape; new shared capabilities use the v1 `endpoints` object.
 
 The app fetches it at startup:
 

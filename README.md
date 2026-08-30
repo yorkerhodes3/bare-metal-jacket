@@ -35,8 +35,8 @@ The original concept is preserved in [CONCEPT-IDEA.md](./CONCEPT-IDEA.md).
 
 Keep your frontend on GitHub Pages. Add only the smallest server-side capability your browser cannot safely provide.
 
-- Start with [the student lab backend guide](./docs/guides/lab-backend-for-students.md).
-- Give your coding agent the [`ethical-tech-colab-backend` skill](./.github/skills/ethical-tech-colab-backend/SKILL.md).
+- Start with [the student lab backend guide](https://github.com/yorkerhodes3/bare-metal-jacket/blob/main/docs/guides/lab-backend-for-students.md).
+- Give your coding agent the raw [`ethical-tech-colab-backend` skill](https://raw.githubusercontent.com/yorkerhodes3/bare-metal-jacket/main/.github/skills/ethical-tech-colab-backend/SKILL.md).
 - Use the [published browser helper](https://yorkerhodes3.github.io/bare-metal-jacket/sdk/lab-backend.js) for shared AI access.
 - Open a [Lab backend request](https://github.com/yorkerhodes3/bare-metal-jacket/issues/new?template=lab_backend_request.yml) when the manifest is ready.
 
