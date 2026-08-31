@@ -35,6 +35,13 @@ const requiredPaths = [
   "site/schemas/lab-backend-project.schema.json",
   "site/schemas/lab-backend-discovery.schema.json",
   "site/templates/lab-backend.project.json",
+  "site/favicon-lab.html",
+  "site/favicon-lab.css",
+  "site/favicon-options/01-armor-plates.svg",
+  "site/favicon-options/02-jacket-lapels.svg",
+  "site/favicon-options/03-armored-server.svg",
+  "site/favicon-options/04-bmj-rivet.svg",
+  "site/favicon-options/05-metal-node.svg",
   ".github/skills/ethical-tech-colab-backend/SKILL.md",
   "tests/deployment/smoke-harness.test.mjs",
 ];

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img">
+  <title>Bare Metal Jacket lapels favicon</title>
+  <defs>
+    <linearGradient id="lapel-bg" x1="6" y1="4" x2="58" y2="60">
+      <stop stop-color="#14253c" />
+      <stop offset="1" stop-color="#08111f" />
+    </linearGradient>
+    <linearGradient id="lapel-left" x1="12" y1="10" x2="31" y2="53">
+      <stop stop-color="#4ee7c0" />
+      <stop offset="1" stop-color="#1da88f" />
+    </linearGradient>
+    <linearGradient id="lapel-right" x1="52" y1="10" x2="33" y2="53">
+      <stop stop-color="#66a3ff" />
+      <stop offset="1" stop-color="#357ad8" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#lapel-bg)" />
+  <path
+    d="M12 13h15l5 11-9 28H12V18a5 5 0 0 1 5-5Z"
+    fill="url(#lapel-left)"
+  />
+  <path
+    d="M52 13H37l-5 11 9 28h11V18a5 5 0 0 0-5-5Z"
+    fill="url(#lapel-right)"
+  />
+  <path d="m27 13 5 11 5-11-5-4-5 4Z" fill="#edf4ff" fill-opacity=".9" />
+  <path d="m23 52 9-28 9 28-9 5-9-5Z" fill="#0c1829" />
+  <circle cx="32" cy="39" r="2.4" fill="#edf4ff" />
+  <circle cx="32" cy="47" r="2.4" fill="#edf4ff" fill-opacity=".65" />
+</svg>

@@ -2,6 +2,8 @@
 
 > **Cloud convenience. Bare-metal control.**
 > **[Explore the project dashboard](https://yorkerhodes3.github.io/bare-metal-jacket/)** - an interactive view of the architecture, product research, delivery phases, and open-source landscape.
+>
+> **[Compare five favicon concepts](https://yorkerhodes3.github.io/bare-metal-jacket/favicon-lab.html)** at 64, 32, and 16 pixels.
 
 Bare Metal Jacket is a self-hosted developer platform that brings managed-PaaS deployment workflows to organization-controlled bare-metal infrastructure. The working name describes the product's role: a protective deployment layer around hardware you own.
 
