@@ -39,6 +39,16 @@ jobs:
           --profile demo
           config
 
+      - name: Validate GPU worker Compose model
+        run: >-
+          docker compose
+          --env-file deploy/gpu-worker/.env.example
+          -f deploy/gpu-worker/docker-compose.yml
+          config
+
+      - name: Build GPU worker status service
+        run: docker build -t bare-metal-jacket/gpu-worker-status:ci deploy/gpu-worker/status
+
       - name: Build example workload
         run: docker build -t bare-metal-jacket/hello-docker:ci examples/hello-docker
 

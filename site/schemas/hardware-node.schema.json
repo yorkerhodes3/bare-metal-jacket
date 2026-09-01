@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yorkerhodes3.github.io/bare-metal-jacket/schemas/hardware-node.schema.json",
+  "title": "Bare Metal Jacket hardware node",
+  "description": "Inventory and scheduling policy for a provisional worker in the lab hardware pool.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "apiVersion": {
+      "const": "baremetaljacket.dev/v1alpha1"
+    },
+    "kind": {
+      "const": "HardwareNode"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "displayName", "owner"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/slug"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "trust",
+        "endpoints",
+        "network",
+        "capacity",
+        "labels",
+        "models",
+        "scheduling",
+        "storage",
+        "heartbeat"
+      ],
+      "properties": {
+        "role": {
+          "const": "inference-worker"
+        },
+        "trust": {
+          "const": "lab-internal"
+        },
+        "endpoints": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["inference", "status"],
+          "properties": {
+            "inference": {
+              "$ref": "#/$defs/privateHttpUrl"
+            },
+            "status": {
+              "$ref": "#/$defs/privateHttpUrl"
+            }
+          }
+        },
+        "network": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["transport", "profile"],
+          "properties": {
+            "transport": {
+              "const": "tailscale"
+            },
+            "profile": {
+              "enum": ["wired", "wifi"]
+            }
+          }
+        },
+        "capacity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["cpuCores", "memoryMiB", "gpu"],
+          "properties": {
+            "cpuCores": {
+              "type": "integer",
+              "minimum": 4
+            },
+            "memoryMiB": {
+              "type": "integer",
+              "minimum": 16384
+            },
+            "gpu": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["count", "vendor", "model", "memoryMiB"],
+              "properties": {
+                "count": {
+                  "const": 1
+                },
+                "vendor": {
+                  "const": "NVIDIA"
+                },
+                "model": {
+                  "type": "string",
+                  "minLength": 2,
+                  "maxLength": 100
+                },
+                "memoryMiB": {
+                  "type": "integer",
+                  "minimum": 20000
+                }
+              }
+            }
+          }
+        },
+        "labels": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 30,
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          }
+        },
+        "models": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 12,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          }
+        },
+        "scheduling": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["state", "maxConcurrent", "allowedWorkloads"],
+          "properties": {
+            "state": {
+              "enum": ["disabled", "enabled", "draining"]
+            },
+            "maxConcurrent": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4
+            },
+            "allowedWorkloads": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "enum": ["ai.chat", "ai.embeddings"]
+              }
+            }
+          }
+        },
+        "storage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["modelCache", "durableApplicationData"],
+          "properties": {
+            "modelCache": {
+              "const": "reconstructable"
+            },
+            "durableApplicationData": {
+              "const": false
+            }
+          }
+        },
+        "heartbeat": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["intervalSeconds", "unavailableAfterSeconds"],
+          "properties": {
+            "intervalSeconds": {
+              "type": "integer",
+              "minimum": 10,
+              "maximum": 300
+            },
+            "unavailableAfterSeconds": {
+              "type": "integer",
+              "minimum": 30,
+              "maximum": 900
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "slug": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 63,
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    },
+    "privateHttpUrl": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^http://(?:100\\.|127\\.0\\.0\\.1|[a-z0-9-]+(?:\\.[a-z0-9-]+)*\\.ts\\.net(?::|/))"
+    }
+  }
+}

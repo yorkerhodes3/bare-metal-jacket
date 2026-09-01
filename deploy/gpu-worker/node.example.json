@@ -1,0 +1,52 @@
+{
+  "$schema": "https://yorkerhodes3.github.io/bare-metal-jacket/schemas/hardware-node.schema.json",
+  "apiVersion": "baremetaljacket.dev/v1alpha1",
+  "kind": "HardwareNode",
+  "metadata": {
+    "id": "office-rtx3090",
+    "displayName": "Office RTX 3090",
+    "owner": "Ethical Tech CoLab"
+  },
+  "spec": {
+    "role": "inference-worker",
+    "trust": "lab-internal",
+    "endpoints": {
+      "inference": "http://100.64.0.10:11434",
+      "status": "http://100.64.0.10:9180"
+    },
+    "network": {
+      "transport": "tailscale",
+      "profile": "wifi"
+    },
+    "capacity": {
+      "cpuCores": 8,
+      "memoryMiB": 32768,
+      "gpu": {
+        "count": 1,
+        "vendor": "NVIDIA",
+        "model": "GeForce RTX 3090",
+        "memoryMiB": 24576
+      }
+    },
+    "labels": {
+      "location": "office",
+      "accelerator": "nvidia-rtx-3090",
+      "network": "wifi",
+      "reliability": "best-effort"
+    },
+    "models": ["qwen3:14b", "gemma3:12b", "deepseek-r1:8b"],
+    "scheduling": {
+      "state": "disabled",
+      "maxConcurrent": 1,
+      "allowedWorkloads": ["ai.chat", "ai.embeddings"]
+    },
+    "storage": {
+      "modelCache": "reconstructable",
+      "durableApplicationData": false
+    },
+    "heartbeat": {
+      "intervalSeconds": 30,
+      "unavailableAfterSeconds": 90
+    }
+  }
+}

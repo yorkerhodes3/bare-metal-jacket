@@ -1,0 +1,19 @@
+[Unit]
+Description=Bare Metal Jacket GPU inference worker
+Requires=docker.service tailscaled.service
+After=docker.service tailscaled.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+WorkingDirectory=__APP_DIR__
+ExecStartPre=/bin/bash __WAIT_SCRIPT__ __ENV_FILE__
+ExecStart=/usr/bin/docker compose --env-file __ENV_FILE__ -f __COMPOSE_FILE__ up --detach --build --wait
+ExecReload=/usr/bin/docker compose --env-file __ENV_FILE__ -f __COMPOSE_FILE__ up --detach --build --wait
+ExecStop=/usr/bin/docker compose --env-file __ENV_FILE__ -f __COMPOSE_FILE__ stop
+TimeoutStartSec=30min
+TimeoutStopSec=5min
+
+[Install]
+WantedBy=multi-user.target

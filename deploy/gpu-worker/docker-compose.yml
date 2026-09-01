@@ -1,0 +1,74 @@
+name: bare-metal-jacket-gpu-worker
+
+services:
+  ollama:
+    image: ollama/ollama:0.31.1
+    gpus: all
+    environment:
+      OLLAMA_HOST: 0.0.0.0:11434
+      OLLAMA_KEEP_ALIVE: ${OLLAMA_KEEP_ALIVE:-30m}
+      OLLAMA_MAX_LOADED_MODELS: ${OLLAMA_MAX_LOADED_MODELS:-1}
+      OLLAMA_NUM_PARALLEL: ${OLLAMA_NUM_PARALLEL:-1}
+      OLLAMA_MAX_QUEUE: ${OLLAMA_MAX_QUEUE:-16}
+    healthcheck:
+      test:
+        - CMD
+        - ollama
+        - list
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    ports:
+      - ${BMJ_BIND_ADDRESS:?Set BMJ_BIND_ADDRESS to the Tailscale IPv4 address}:${BMJ_OLLAMA_PORT:-11434}:11434
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - ollama-models:/root/.ollama
+    networks:
+      - worker
+      - host-access
+
+  status:
+    build:
+      context: ./status
+    environment:
+      PORT: "9180"
+      OLLAMA_URL: http://ollama:11434
+      NODE_MANIFEST_PATH: /etc/bare-metal-jacket/node.json
+    depends_on:
+      ollama:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:9180/readyz').then(r=>{if(!r.ok)process.exit(1)})
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    ports:
+      - ${BMJ_BIND_ADDRESS:?Set BMJ_BIND_ADDRESS to the Tailscale IPv4 address}:${BMJ_STATUS_PORT:-9180}:9180
+    read_only: true
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    volumes:
+      - ${BMJ_NODE_MANIFEST:?Set BMJ_NODE_MANIFEST to an absolute manifest path}:/etc/bare-metal-jacket/node.json:ro
+    networks:
+      - worker
+      - host-access
+
+volumes:
+  ollama-models:
+
+networks:
+  worker:
+    internal: true
+  host-access:

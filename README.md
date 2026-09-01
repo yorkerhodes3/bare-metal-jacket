@@ -45,6 +45,8 @@ Keep your frontend on GitHub Pages. Add only the smallest server-side capability
 
 The default is one shared lab gateway for narrow, approved capabilities. Projects needing accounts, sensitive data, uploads, background jobs, or custom server behavior receive a reviewed dedicated container instead.
 
+Adding office or lab GPU capacity? Use the [RTX 3090 inference-worker runbook](https://github.com/yorkerhodes3/bare-metal-jacket/blob/main/docs/operations/add-gpu-worker.md) or give an operator agent the raw [`add-gpu-worker` skill](https://raw.githubusercontent.com/yorkerhodes3/bare-metal-jacket/main/.github/skills/add-gpu-worker/SKILL.md). GPU desktops join as private, stateless workers; durable services and control-plane state remain on the B3IQ foundation.
+
 ## Design principles
 
 1. **Docker-native:** accept a Dockerfile or a prebuilt OCI image.

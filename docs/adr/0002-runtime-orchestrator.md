@@ -43,3 +43,5 @@ Evaluate SwarmKit, Nomad, and Kubernetes when one or more are required:
 - capacity-aware scheduling beyond the local agent.
 
 Nomad 1.7 and later are Business Source License software. Any use in a commercial platform that could be considered competitive requires legal review before adoption.
+
+The provisional GPU inference pool does not change this decision. An inference worker exposes a private model endpoint plus read-only health and inventory; it cannot receive general workload specifications or access Docker through the network. Model placement remains explicit and manual until the node-agent protocol and scheduler are implemented.

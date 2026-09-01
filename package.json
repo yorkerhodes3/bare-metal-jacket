@@ -18,7 +18,9 @@
     "scaffold:lab-project": "node scripts/scaffold-lab-project.mjs",
     "smoke:b3iq-proxy": "node scripts/pages-proxy-smoke.mjs",
     "smoke:deployment": "node scripts/deployment-smoke.mjs",
-    "test": "node scripts/validate-structure.mjs && node --test tests/deployment/*.test.mjs tests/lab-client/*.test.mjs",
+    "smoke:gpu-worker": "node scripts/gpu-worker-smoke.mjs",
+    "test": "node scripts/validate-structure.mjs && node --test tests/deployment/*.test.mjs tests/gpu-worker/*.test.mjs tests/lab-client/*.test.mjs",
+    "validate:hardware-node": "node scripts/validate-hardware-node.mjs",
     "validate:lab-project": "node scripts/validate-lab-project.mjs",
     "verify:backup": "node scripts/verify-foundation-backup.mjs"
   },
