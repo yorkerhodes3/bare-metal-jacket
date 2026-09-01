@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img">
+  <title>Bare Metal Jacket armor plates favicon</title>
+  <defs>
+    <linearGradient id="armor-bg" x1="8" y1="5" x2="56" y2="59">
+      <stop stop-color="#14253c" />
+      <stop offset="1" stop-color="#08111f" />
+    </linearGradient>
+    <linearGradient id="armor-front" x1="20" y1="47" x2="47" y2="29">
+      <stop stop-color="#4ee7c0" />
+      <stop offset="1" stop-color="#66a3ff" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#armor-bg)" />
+  <rect
+    x="1.5"
+    y="1.5"
+    width="61"
+    height="61"
+    rx="13.5"
+    fill="none"
+    stroke="#66a3ff"
+    stroke-opacity=".22"
+    stroke-width="3"
+  />
+  <path
+    d="M17 19.5 41.5 10a4 4 0 0 1 5.5 3.7v4.1L21.5 28A4 4 0 0 1 16 24.3v-2.1a3 3 0 0 1 1-2.7Z"
+    fill="#4ee7c0"
+    fill-opacity=".46"
+  />
+  <path
+    d="m17 29 24.5-9.5a4 4 0 0 1 5.5 3.7v4.1L21.5 37.5a4 4 0 0 1-5.5-3.7v-2.1a3 3 0 0 1 1-2.7Z"
+    fill="#4ee7c0"
+    fill-opacity=".72"
+  />
+  <path
+    d="m17 38.5 24.5-9.5a4 4 0 0 1 5.5 3.7v5.1L21.5 48A4 4 0 0 1 16 44.3v-3.1a3 3 0 0 1 1-2.7Z"
+    fill="url(#armor-front)"
+  />
+</svg>

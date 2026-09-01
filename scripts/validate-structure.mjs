@@ -37,6 +37,7 @@ const requiredPaths = [
   "site/templates/lab-backend.project.json",
   "site/favicon-lab.html",
   "site/favicon-lab.css",
+  "site/favicon.svg",
   "site/favicon-options/01-armor-plates.svg",
   "site/favicon-options/02-jacket-lapels.svg",
   "site/favicon-options/03-armored-server.svg",
