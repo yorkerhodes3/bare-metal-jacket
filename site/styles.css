@@ -246,12 +246,17 @@ button {
   position: relative;
   display: grid;
   min-height: 940px;
-  grid-template-columns: minmax(0, 1.03fr) minmax(400px, 0.97fr);
+  grid-template-columns: minmax(0, 1.18fr) minmax(400px, 0.82fr);
   align-content: center;
   gap: 48px;
   overflow: hidden;
   padding: 180px max(30px, calc((100vw - var(--max)) / 2)) 170px;
   isolation: isolate;
+}
+
+.hero-content,
+.hero-terminal {
+  min-width: 0;
 }
 
 .hero-grid {
@@ -328,9 +333,9 @@ button {
 }
 
 .hero h1 {
-  max-width: 700px;
+  max-width: 100%;
   margin: 0;
-  font-size: clamp(3.5rem, 6vw, 6.8rem);
+  font-size: clamp(3.5rem, 5.4vw, 5.8rem);
   font-weight: 760;
   letter-spacing: -0.065em;
   line-height: 0.96;
