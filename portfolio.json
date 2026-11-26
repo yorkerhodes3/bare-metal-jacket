@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "id": "bare-metal-jacket",
+  "title": "Bare Metal Jacket",
+  "repo": "yorkerhodes3/bare-metal-jacket",
+  "summary": "A self-hosted developer platform design that brings managed-PaaS deployment workflows, from Git push to a healthy HTTPS service, to organization-controlled bare-metal servers.",
+  "kind": "infrastructure",
+  "methodTags": [
+    "edge-hardware"
+  ],
+  "domainTags": [
+    "cybersecurity",
+    "education"
+  ],
+  "contribution": {
+    "date": "2026-09-01",
+    "role": "built",
+    "credits": []
+  },
+  "narrative": {
+    "problem": "Developers want to connect a Git repository, pick a branch and configuration, and receive a running HTTPS service without operating the underlying infrastructure by hand, while keeping operational control, portable OCI artifacts, transparent costs and repeatable recovery on hardware they own.",
+    "decision": "The first implementation is deliberately Docker-native, bare-metal-first and single-node, validating the complete deployment path before introducing a distributed scheduler or Kubernetes.",
+    "tradeoff": "Public or hostile multi-tenancy, autoscaling, multiple regions, GPU scheduling, managed databases and Kubernetes are explicitly deferred, so the first release serves trusted internal users on one server.",
+    "limitation": "The repository is in Phase 0 (product, contract and threat definition): it has architecture, an API contract, a security model, local infrastructure composition and a sample workload, but no production control plane yet, and no license has been selected.",
+    "caveat": "Phase 0 project: the site presents architecture, research and roadmap; the first release must not be treated as safe for hostile public multi-tenancy."
+  },
+  "evidence": {
+    "level": "design",
+    "links": [
+      {
+        "label": "Latest commit",
+        "url": "https://github.com/yorkerhodes3/bare-metal-jacket/commit/8ac98575b8fa7ff17a926b361ff9ead678fabbe3",
+        "date": "2026-09-01"
+      },
+      {
+        "label": "README",
+        "url": "https://github.com/yorkerhodes3/bare-metal-jacket#readme",
+        "date": "2026-09-01"
+      },
+      {
+        "label": "Threat model",
+        "url": "https://github.com/yorkerhodes3/bare-metal-jacket/blob/main/docs/security/threat-model.md",
+        "date": "2026-09-01"
+      },
+      {
+        "label": "Control-plane API contract",
+        "url": "https://github.com/yorkerhodes3/bare-metal-jacket/blob/main/openapi/control-plane.yaml",
+        "date": "2026-09-01"
+      },
+      {
+        "label": "Competitive landscape research",
+        "url": "https://github.com/yorkerhodes3/bare-metal-jacket/blob/main/docs/research/competitive-landscape.md",
+        "date": "2026-09-01"
+      }
+    ]
+  },
+  "links": {
+    "source": "https://github.com/yorkerhodes3/bare-metal-jacket"
+  },
+  "images": [
+    {
+      "id": "release-flow",
+      "src": ".portfolio/release-flow.webp",
+      "alt": "Bare Metal Jacket dashboard hero marked Phase 0, contract and threat definition, beside a release-flow log moving from verified Git webhook through BuildKit build, OCI digest and readiness check to an active HTTPS release.",
+      "caption": "The intended deployment path: a Docker-native route from Git push to a healthy HTTPS service, with the previous release kept for rollback.",
+      "credit": "Screenshot of the Bare Metal Jacket site",
+      "source": "screenshot of site/index.html"
+    },
+    {
+      "id": "student-backends",
+      "src": ".portfolio/student-backends.webp",
+      "alt": "Document excerpt card headed For Ethical Tech CoLab students, quoting the README on a shared lab gateway by default and reviewed dedicated containers for projects needing more.",
+      "caption": "How the platform serves student projects: one shared lab gateway for narrow capabilities, dedicated containers only after review.",
+      "credit": "Excerpt from the Bare Metal Jacket README",
+      "source": "README excerpt"
+    },
+    {
+      "id": "favicon-lab",
+      "src": ".portfolio/favicon-lab.webp",
+      "alt": "Favicon lab page, an identity study of five directions on a shared palette and 64-pixel grid, with the Armor Plates direction marked Selected next to Jacket Lapels.",
+      "caption": "The favicon lab compares five identity concepts at the 16-pixel size people see in a browser tab; Armor Plates was selected.",
+      "credit": "Screenshot of the Bare Metal Jacket site",
+      "source": "screenshot of site/favicon-lab.html"
+    }
+  ],
+  "defaultImageId": "release-flow"
+}
